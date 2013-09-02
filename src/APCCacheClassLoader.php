@@ -5,7 +5,7 @@
 namespace Intahwebz\Autoload;
 
 
-class ClassLoader
+class APCCacheClassLoader
 {
     private $prefix = "Intahwebz_ClassLoader";
     
@@ -114,9 +114,11 @@ class ClassLoader
 }
 
 
-$loader = new \Intahwebz\Autoload\ClassLoader();
+$loader = new \Intahwebz\Autoload\APCCacheClassLoader();
 
-$map = require '../../../composer/autoload_namespaces.php';
+$filepath = __DIR__.'/../../../composer/autoload_namespaces.php';
+$map = require $filepath;
+
 foreach ($map as $namespace => $path) {
     $loader->set($namespace, $path);
 }
