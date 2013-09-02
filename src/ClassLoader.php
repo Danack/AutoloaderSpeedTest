@@ -116,7 +116,7 @@ class ClassLoader
 
 $loader = new \Intahwebz\Autoload\ClassLoader();
 
-$map = require '../composer/autoload_namespaces.php';
+$map = require '../../../composer/autoload_namespaces.php';
 foreach ($map as $namespace => $path) {
     $loader->set($namespace, $path);
 }
