@@ -1,0 +1,13 @@
+{
+    "name": "intahwebz/autoloader",
+    "description": "Autoloader speed optimization test.",
+    "authors": [
+        {
+            "name": "Danack",
+            "email": "Danack@basereality.com"
+        }
+    ],
+    "require": {
+
+    }
+}
