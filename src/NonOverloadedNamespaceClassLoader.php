@@ -124,7 +124,9 @@ $loader = new \Intahwebz\Autoload\APCCacheClassLoader();
 $filepath = __DIR__.'/../../../composer/autoload_namespaces.php';
 $map = require $filepath;
 
-foreach ($map as $namespace => $path) {
+foreach ($map as $namespace => $paths) {
+
+    $path = $paths[0];
     $loader->set($namespace, $path);
 }
 

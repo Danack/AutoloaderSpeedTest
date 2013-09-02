@@ -5,10 +5,8 @@
 namespace Intahwebz\Autoload;
 
 
-class APCCacheClassLoader
+class OPCachingClassLoader
 {
-    private $prefix = "Intahwebz_ClassLoader";
-
     private $prefixes = array();
 
     /**
@@ -17,8 +15,8 @@ class APCCacheClassLoader
      * @param string       $prefix The classes prefix
      * @param array|string $paths  The location(s) of the classes
      */
-    public function set($prefix, $paths){
-        $this->prefixes[$prefix] = (array) $paths;
+    public function set($prefix, $paths) {
+        $this->prefixes[substr($prefix, 0, 1)][$prefix] = (array) $paths;
     }
 
     /**
@@ -52,27 +50,7 @@ class APCCacheClassLoader
 
             return true;
         }
-        //return false;
     }
-
-
-    public function findFile($class) {
-
-        $file = apc_fetch($this->prefix.$class);
-
-        if ($file === false) {
-            $file = $this->findFileInternal($class);
-
-            if ($file) {
-                apc_store($this->prefix.$class, $file);
-                return $file;
-            }
-            return false;
-        }
-
-        return $file;
-    }
-
 
     /**
      * Finds the path to the file where the class is defined.
@@ -81,7 +59,7 @@ class APCCacheClassLoader
      *
      * @return string|false The path if found, false otherwise
      */
-    public function findFileInternal($class)
+    public function findFile($class)
     {
 
         if (false !== $pos = strrpos($class, '\\')) {
@@ -101,8 +79,16 @@ class APCCacheClassLoader
             foreach ($this->prefixes[$first] as $prefix => $dirs) {
                 if (0 === strpos($class, $prefix)) {
                     foreach ($dirs as $dir) {
-                        if (file_exists($dir . DIRECTORY_SEPARATOR . $classPath)) {
-                            return $dir . DIRECTORY_SEPARATOR . $classPath;
+                        $filename = $dir.DIRECTORY_SEPARATOR.$classPath;
+                        if (opcache_file_cached($filename) == true) {
+                            return $filename;
+                        }
+                    }
+
+                    foreach ($dirs as $dir) {
+                        $filename = $dir.DIRECTORY_SEPARATOR.$classPath;
+                        if (file_exists($filename)) {
+                            return $filename;
                         }
                     }
                 }
@@ -114,7 +100,7 @@ class APCCacheClassLoader
 }
 
 
-$loader = new \Intahwebz\Autoload\APCCacheClassLoader();
+$loader = new \Intahwebz\Autoload\OPCachingClassLoader();
 
 $filepath = __DIR__.'/../../../composer/autoload_namespaces.php';
 $map = require $filepath;

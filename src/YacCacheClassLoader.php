@@ -8,16 +8,16 @@ namespace Intahwebz\Autoload;
 class YacCacheClassLoader
 {
     private $prefix = "Intahwebz_ClassLoader";
-    
+
     private $prefixes = array();
 
-    
+
     private $yac = null;
-    
+
     public function __construct() {
-        $this->yac = new Yac();
+        $this->yac = new \Yac();
     }
-    
+
     /**
      * Registers a set of classes, replacing any others previously set.
      *
@@ -62,27 +62,27 @@ class YacCacheClassLoader
         //return false;
     }
 
-    
+
     public function findFile($class) {
 
-        $cacheKey = $this->prefix.$class;
-        
+        $cacheKey = md5($this->prefix.$class);
+
         $file = $this->yac->get($cacheKey);
 
         if ($file === false) {
             $file = $this->findFileInternal($class);
-            
+
             if ($file) {
                 $this->yac->set($cacheKey, $file);
-                return $file;   
+                return $file;
             }
             return false;
         }
 
         return $file;
     }
-        
-    
+
+
     /**
      * Finds the path to the file where the class is defined.
      *
