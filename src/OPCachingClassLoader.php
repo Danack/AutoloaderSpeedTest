@@ -95,7 +95,7 @@ class OPCachingClassLoader
                 if (0 === strpos($class, $prefix)) {
                     foreach ($dirs as $dir) {
                         $filename = $dir.DIRECTORY_SEPARATOR.$classPath;
-                        if (opcache_file_cached($filename) == true) {
+                        if (opcache_script_cached($filename) == true) {
                             return $filename;
                         }
                     }
