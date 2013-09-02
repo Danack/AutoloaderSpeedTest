@@ -9,6 +9,19 @@ class OPCachingClassLoader
 {
     private $prefixes = array();
 
+    function __construct() {
+
+        $filepath = dirname(dirname(dirname(__DIR__))).'/composer/autoload_namespaces.php';
+        $map = require $filepath;
+
+        foreach ($map as $namespace => $path) {
+            $this->set($namespace, $path);
+        }
+
+        $this->register(true);
+    }
+    
+    
     /**
      * Registers a set of classes, replacing any others previously set.
      *
@@ -77,6 +90,8 @@ class OPCachingClassLoader
         $first = $class[0];
         if (isset($this->prefixes[$first])) {
             foreach ($this->prefixes[$first] as $prefix => $dirs) {
+
+                //Check all possible paths in OPCache before checking the file system
                 if (0 === strpos($class, $prefix)) {
                     foreach ($dirs as $dir) {
                         $filename = $dir.DIRECTORY_SEPARATOR.$classPath;
@@ -101,15 +116,6 @@ class OPCachingClassLoader
 
 
 $loader = new \Intahwebz\Autoload\OPCachingClassLoader();
-
-$filepath = __DIR__.'/../../../composer/autoload_namespaces.php';
-$map = require $filepath;
-
-foreach ($map as $namespace => $path) {
-    $loader->set($namespace, $path);
-}
-
-$loader->register(true);
 
 return $loader;
 
