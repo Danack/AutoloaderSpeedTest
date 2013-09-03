@@ -74,7 +74,6 @@ class OPCachingClassLoader
      */
     public function findFile($class)
     {
-
         if (false !== $pos = strrpos($class, '\\')) {
             // namespaced class name
             $classPath = strtr(substr($class, 0, $pos), '\\', DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
@@ -108,6 +107,17 @@ class OPCachingClassLoader
                     }
                 }
             }
+        }
+        
+        //Didn't find it - might be a classmap
+
+        if ($this->classMap == null) {
+            $filepath = dirname(dirname(dirname(__DIR__))).'/composer/autoload_classmap.php';
+            $this->classMap = require $filepath;
+        }
+
+        if (isset($this->classMap[$class])) {
+            return $this->classMap[$class];
         }
 
         return false;
