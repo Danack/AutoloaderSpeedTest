@@ -7,6 +7,7 @@ namespace Intahwebz\Autoload;
 
 class OPCachingClassLoader
 {
+    private $classMap = null;
     private $prefixes = array();
 
     function __construct() {
